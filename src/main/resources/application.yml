@@ -4,9 +4,9 @@ server:
     context-path: /lms
 spring:
   datasource:
-    url: jdbc:postgresql://ec2-52-203-118-49.compute-1.amazonaws.com:5432/d86nrgfju2v0qr
-    username: pvnofkrwmhyrop   #changed as per Local DB
-    password: cadd6e7c1054583e2bfa9a1075740e4f88f92ac1fddc5db85505a48dd521f7f6 #mypostgres   #changed as per Local DB
+    url: jdbc:postgresql://ec2-52-203-118-49.compute-1.amazonaws.com:5432/d86nrgfju2v0qr #jdbc:postgresql://localhost:5432/postgres #database name:  #
+    username: pvnofkrwmhyrop #postgres # pvnofkrwmhyrop   #changed as per Local DB
+    password: cadd6e7c1054583e2bfa9a1075740e4f88f92ac1fddc5db85505a48dd521f7f6 #admin #cadd6e7c1054583e2bfa9a1075740e4f88f92ac1fddc5db85505a48dd521f7f6 #mypostgres   #changed as per Local DB
 
   jackson.deserialization.fail-on-unknown-properties: true
   jackson.serialization.fail-on-empty-beans: false  # LMSPhase2 changes
@@ -16,7 +16,8 @@ spring:
   
   jpa.hibernate.ddl-auto: none
   jpa.defer-datasource-initialization: true
-       
+  sql.init.mode: always
+ # jpa.open-in-view : false
 logging:
   file:
     name: lmsservice.log

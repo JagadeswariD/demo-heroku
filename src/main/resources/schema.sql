@@ -1,6 +1,8 @@
+
+
 -- Table: public.tbl_lms_user
 
--- DROP TABLE IF EXISTS public.tbl_lms_user;
+ DROP TABLE IF EXISTS public.tbl_lms_user Cascade;
 
 CREATE TABLE IF NOT EXISTS public.tbl_lms_user
 (
@@ -21,10 +23,20 @@ CREATE TABLE IF NOT EXISTS public.tbl_lms_user
     CONSTRAINT time_zone_chk CHECK (user_time_zone::text = ANY (ARRAY['PST'::character varying::text, 'MST'::character varying::text, 'CST'::character varying::text, 'EST'::character varying::text, 'IST'::character varying::text])),
     CONSTRAINT visa_status_chk CHECK (user_visa_status::text = ANY (ARRAY['Not-Specified'::character varying::text, 'NA'::character varying::text, 'GC-EAD'::character varying::text, 'H4-EAD'::character varying::text, 'H4'::character varying::text, 'H1B'::character varying::text, 'Canada-EAD'::character varying::text, 'Indian-Citizen'::character varying::text, 'US-Citizen'::character varying::text, 'Canada-Citizen'::character varying::text]))
 );
+-- SEQUENCE: public.tbl_lms_program_program_id_seq
+ DROP TABLE IF EXISTS public.tbl_lms_program Cascade;
+ --DROP SEQUENCE IF EXISTS public.tbl_lms_program_program_id_seq;
+
+CREATE SEQUENCE IF NOT EXISTS public.tbl_lms_program_program_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 2147483647
+    CACHE 1;
 
 -- Table: public.tbl_lms_program
 
--- DROP TABLE IF EXISTS public.tbl_lms_program;
+
 
 CREATE TABLE IF NOT EXISTS public.tbl_lms_program
 (
@@ -38,9 +50,24 @@ CREATE TABLE IF NOT EXISTS public.tbl_lms_program
     CONSTRAINT tbl_lms_program_program_name_key UNIQUE (program_name)
 );
 
+ALTER SEQUENCE public.tbl_lms_program_program_id_seq OWNED by  tbl_lms_program.program_id;
+
+
+DROP TABLE IF EXISTS public.tbl_lms_batch cascade;
+ --SEQUENCE: public.tbl_lms_batch_batch_id_seq
+
+--DROP SEQUENCE IF EXISTS public.tbl_lms_batch_batch_id_seq;
+
+CREATE SEQUENCE IF NOT EXISTS public.tbl_lms_batch_batch_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 2147483647
+    CACHE 1;
+
 -- Table: public.tbl_lms_batch
 
--- DROP TABLE IF EXISTS public.tbl_lms_batch;
+
 
 CREATE TABLE IF NOT EXISTS public.tbl_lms_batch
 (
@@ -60,7 +87,22 @@ CREATE TABLE IF NOT EXISTS public.tbl_lms_batch
         ON DELETE CASCADE
 );
 
+ALTER SEQUENCE public.tbl_lms_batch_batch_id_seq OWNED BY tbl_lms_batch.batch_id;
 
+DROP TABLE IF EXISTS public.tbl_lms_assignments cascade;
+-- SEQUENCE: public.tbl_lms_assignments_a_id_seq
+
+-- DROP SEQUENCE IF EXISTS public.tbl_lms_assignments_a_id_seq;
+
+CREATE SEQUENCE IF NOT EXISTS public.tbl_lms_assignments_a_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1;
+	
+	
+    
 -- Table: public.tbl_lms_assignments
 
 -- DROP TABLE IF EXISTS public.tbl_lms_assignments;
@@ -92,9 +134,26 @@ CREATE TABLE IF NOT EXISTS public.tbl_lms_assignments
         ON UPDATE CASCADE
         ON DELETE NO ACTION
 );
+
+ALTER SEQUENCE public.tbl_lms_assignments_a_id_seq OWNED BY tbl_lms_assignments.a_id;
+
+
+DROP TABLE IF EXISTS public.tbl_lms_class_sch cascade;
+
+-- SEQUENCE: public.tbl_lms_class_sch_cs_id_seq
+
+DROP SEQUENCE IF EXISTS public.tbl_lms_class_sch_cs_id_seq;
+
+CREATE SEQUENCE IF NOT EXISTS public.tbl_lms_class_sch_cs_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1;	
+
 -- Table: public.tbl_lms_class_sch
 
--- DROP TABLE IF EXISTS public.tbl_lms_class_sch;
+
 
 CREATE TABLE IF NOT EXISTS public.tbl_lms_class_sch
 (
@@ -121,9 +180,24 @@ CREATE TABLE IF NOT EXISTS public.tbl_lms_class_sch
         ON DELETE NO ACTION
 );
 
+ALTER SEQUENCE public.tbl_lms_class_sch_cs_id_seq OWNED BY tbl_lms_class_sch.cs_id;
+
+
+ DROP TABLE IF EXISTS public.tbl_lms_attendance cascade;
+     
+--SEQUENCE: public.tbl_lms_attendance_att_id_seq
+
+ DROP SEQUENCE IF EXISTS public.tbl_lms_attendance_att_id_seq;
+
+CREATE SEQUENCE IF NOT EXISTS public.tbl_lms_attendance_att_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1;    
+    
 -- Table: public.tbl_lms_attendance
 
--- DROP TABLE IF EXISTS public.tbl_lms_attendance;
 
 CREATE TABLE IF NOT EXISTS public.tbl_lms_attendance
 (
@@ -143,10 +217,11 @@ CREATE TABLE IF NOT EXISTS public.tbl_lms_attendance
         ON DELETE CASCADE
 );
 
+ALTER SEQUENCE public.tbl_lms_attendance_att_id_seq OWNED BY tbl_lms_attendance.att_id;
 
 -- Table: public.tbl_lms_role
 
--- DROP TABLE IF EXISTS public.tbl_lms_role;
+ DROP TABLE IF EXISTS public.tbl_lms_role cascade;
 
 CREATE TABLE IF NOT EXISTS public.tbl_lms_role
 (
@@ -158,9 +233,20 @@ CREATE TABLE IF NOT EXISTS public.tbl_lms_role
     CONSTRAINT role_id_pk PRIMARY KEY (role_id)
 );
 
+ DROP TABLE IF EXISTS public.tbl_lms_skill_master cascade;
+-- SEQUENCE: public.tbl_lms_skill_master_skill_id_seq
+
+ DROP SEQUENCE IF EXISTS public.tbl_lms_skill_master_skill_id_seq;
+
+CREATE SEQUENCE IF NOT EXISTS public.tbl_lms_skill_master_skill_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1;
+	
 -- Table: public.tbl_lms_skill_master
 
--- DROP TABLE IF EXISTS public.tbl_lms_skill_master;
 
 CREATE TABLE IF NOT EXISTS public.tbl_lms_skill_master
 (
@@ -171,10 +257,28 @@ CREATE TABLE IF NOT EXISTS public.tbl_lms_skill_master
     CONSTRAINT skill_id_pk PRIMARY KEY (skill_id)
 );
 
+	
+
+
+ALTER SEQUENCE public.tbl_lms_skill_master_skill_id_seq OWNED BY tbl_lms_skill_master.skill_id;
+
+
+ DROP TABLE IF EXISTS public.tbl_lms_submissions cascade;
+ 
+-- SEQUENCE: public.tbl_lms_submissions_sub_id_seq
+
+ DROP SEQUENCE IF EXISTS public.tbl_lms_submissions_sub_id_seq;
+
+CREATE SEQUENCE IF NOT EXISTS public.tbl_lms_submissions_sub_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1;
 
 -- Table: public.tbl_lms_submissions
 
--- DROP TABLE IF EXISTS public.tbl_lms_submissions;
+
 
 CREATE TABLE IF NOT EXISTS public.tbl_lms_submissions
 (
@@ -206,9 +310,25 @@ CREATE TABLE IF NOT EXISTS public.tbl_lms_submissions
 );
 
 
+
+ALTER SEQUENCE public.tbl_lms_submissions_sub_id_seq OWNED BY tbl_lms_submissions.sub_id;
+
+
+ DROP TABLE IF EXISTS public.tbl_lms_user_files cascade;
+ 	
+-- SEQUENCE: public.tbl_lms_user_files_user_file_id_seq
+
+ DROP SEQUENCE IF EXISTS public.tbl_lms_user_files_user_file_id_seq;
+
+CREATE SEQUENCE IF NOT EXISTS public.tbl_lms_user_files_user_file_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1;
+    
 -- Table: public.tbl_lms_user_files
 
--- DROP TABLE IF EXISTS public.tbl_lms_user_files;
 
 CREATE TABLE IF NOT EXISTS public.tbl_lms_user_files
 (
@@ -224,9 +344,11 @@ CREATE TABLE IF NOT EXISTS public.tbl_lms_user_files
     CONSTRAINT file_desc_check CHECK (user_file_type::text = ANY (ARRAY['Resume'::character varying::text, 'ProfilePic'::character varying::text]))
 );
 
+ALTER SEQUENCE public.tbl_lms_user_files_user_file_id_seq OWNED BY tbl_lms_user_files.user_file_id;
+
 -- Table: public.tbl_lms_user_login
 
--- DROP TABLE IF EXISTS public.tbl_lms_user_login;
+ DROP TABLE IF EXISTS public.tbl_lms_user_login;
 
 CREATE TABLE IF NOT EXISTS public.tbl_lms_user_login
 (
@@ -245,9 +367,22 @@ CREATE TABLE IF NOT EXISTS public.tbl_lms_user_login
         ON DELETE CASCADE
 );
 
+
+ DROP TABLE IF EXISTS public.tbl_lms_userrole_map cascade;
+-- SEQUENCE: public.tbl_lms_userrole_map_user_role_id_seq
+
+ DROP SEQUENCE IF EXISTS public.tbl_lms_userrole_map_user_role_id_seq;
+
+CREATE SEQUENCE IF NOT EXISTS public.tbl_lms_userrole_map_user_role_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1;
+
+
 -- Table: public.tbl_lms_userrole_map
 
--- DROP TABLE IF EXISTS public.tbl_lms_userrole_map;
 
 CREATE TABLE IF NOT EXISTS public.tbl_lms_userrole_map
 (
@@ -269,9 +404,12 @@ CREATE TABLE IF NOT EXISTS public.tbl_lms_userrole_map
         ON DELETE CASCADE
 );
 
+ALTER SEQUENCE public.tbl_lms_userrole_map_user_role_id_seq OWNED BY tbl_lms_userrole_map.user_role_id;
+
+
 -- Table: public.tbl_lms_userbatch_map
 
--- DROP TABLE IF EXISTS public.tbl_lms_userbatch_map;
+DROP TABLE IF EXISTS public.tbl_lms_userbatch_map;
 
 CREATE TABLE IF NOT EXISTS public.tbl_lms_userbatch_map
 (
@@ -291,7 +429,7 @@ CREATE TABLE IF NOT EXISTS public.tbl_lms_userbatch_map
 
 -- Table: public.tbl_lms_userskill_map
 
--- DROP TABLE IF EXISTS public.tbl_lms_userskill_map;
+ DROP TABLE IF EXISTS public.tbl_lms_userskill_map;
 
 CREATE TABLE IF NOT EXISTS public.tbl_lms_userskill_map
 (
