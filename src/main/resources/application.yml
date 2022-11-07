@@ -14,7 +14,7 @@ spring:
   main.allow-bean-definition-overriding: true
   #hibernate ddl Auto for CURDOperations
   
-  jpa.hibernate.ddl-auto: none
+   jpa.hibernate.ddl-auto: none
   jpa.defer-datasource-initialization: true
   sql.init.mode: always
  # jpa.open-in-view : false
