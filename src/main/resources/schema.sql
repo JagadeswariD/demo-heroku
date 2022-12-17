@@ -450,3 +450,15 @@ CREATE TABLE IF NOT EXISTS public.tbl_lms_userskill_map
         ON UPDATE CASCADE
         ON DELETE CASCADE
 );
+
+Alter table tbl_lms_user Add column 
+user_middle_name character varying COLLATE pg_catalog."default";
+
+CREATE SEQUENCE IF NOT EXISTS public.tbl_lms_user_user_id_seq
+    START WITH  11  /* plz give the no of rows in ur user table + 1 */
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+	OWNED BY public.tbl_lms_user.user_id;
+--ALTER TABLE public.tbl_lms_user_user_id_seq OWNER TO postgres;

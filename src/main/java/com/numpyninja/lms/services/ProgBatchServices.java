@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
+import com.numpyninja.lms.entity.Class;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -46,9 +47,26 @@ public class ProgBatchServices {
     }
 
     //method for finding BatchName
-    public List<BatchDTO> findByProgramBatchName(String name) {
+   /* public List<BatchDTO> findByProgramBatchName(String name) {
     	List<Batch> batchList = progBatchRepository.findByBatchName(name);
     	return batchMapper.toBatchDTOs( batchList );
+    }*/
+
+
+    //method for finding BatchName
+    public List<BatchDTO> findByProgramBatchName(String name) {
+        if(!(name.isEmpty())) {
+            List<Batch> batchList = progBatchRepository.findByBatchName(name);
+            if(batchList.size()<=0) {
+                System.out.println("programBatch with " + name+"not found");
+                throw new ResourceNotFoundException("programBatch with id"+ name +"not found");
+            }
+            return batchMapper.toBatchDTOs( batchList );
+        }
+        else {
+            System.out.println("Batch cannot be blank or null");
+            throw new IllegalArgumentException();
+        }
     }
 
     // create new  Batch under Program     
@@ -83,8 +101,23 @@ public class ProgBatchServices {
 
 
     // get Batches by Program ID         
+   /* public List<BatchDTO> findBatchByProgramId(Long programid) {
+      return batchMapper.toBatchDTOs(progBatchRepository.findByProgramProgramId(programid));
+    }*/
+    // get Batches by Program ID
     public List<BatchDTO> findBatchByProgramId(Long programid) {
-      return batchMapper.toBatchDTOs(progBatchRepository.findByProgramProgramId(programid));      
+        if (programid != null) {
+            List<Batch> result = progBatchRepository.findByProgramProgramId(programid);
+            if (!(result.size() <= 0)) {
+                return (batchMapper.toBatchDTOs(result));
+
+            } else {
+                throw new ResourceNotFoundException("batch with this programId " + programid + "not found");
+            }
+        } else {
+            System.out.println("programId search string cannot be null");
+            throw new IllegalArgumentException();
+        }
     }
 
     public void deleteProgramBatch(Integer batchId) {

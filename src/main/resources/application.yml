@@ -1,23 +1,40 @@
+java:
+  runtime:
+  version: 11
+  
 server:
   port: 1234
   servlet:
     context-path: /lms
 spring:
   datasource:
-    url: jdbc:postgresql://ec2-3-217-251-77.compute-1.amazonaws.com:5432/d73fal507rokm8 # jdbc:postgresql://localhost:5432/LMS_DB
-    username: cyhhwycxvhgool  #postgres #changed as per Local DB
-    password: 32283ade1303728d8066f6b5155f6b9900072e130996662720bbcf021a49cbf2 #mypostgres   #changed as per Local DB
-
+    url: jdbc:postgresql://ec2-3-217-251-77.compute-1.amazonaws.com:5432/d73fal507rokm8
+    username: cyhhwycxvhgool  #changed as per Local DB
+    password: 32283ade1303728d8066f6b5155f6b9900072e130996662720bbcf021a49cbf2  #changed as per Local DB
   jackson.deserialization.fail-on-unknown-properties: true
   jackson.serialization.fail-on-empty-beans: false  # LMSPhase2 changes
   mvc.hiddenmethod.filter.enabled: true
   main.allow-bean-definition-overriding: true
   #hibernate ddl Auto for CURDOperations
+  jpa.hibernate.ddl-auto: update
+
+
+#File related Configurations
   
-  jpa.hibernate.ddl-auto: none
-  jpa.defer-datasource-initialization: true
-  #sql.init.mode: always
- # jpa.open-in-view : false
+  Spring :
+  http :
+   multipart :
+     enabled = true
+               
+  servlet:
+    multipart:
+      max-file-size: ${MAX_FILE_SIZE:8MB}
+      max-request-size: ${MAX_REQUEST_SIZE:8MB}
+      
+  project:
+  image: images/
+      
+
 logging:
   file:
     name: lmsservice.log

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.numpyninja.lms.dto.UserAndRoleDTO;
 import com.numpyninja.lms.dto.UserDto;
+import com.numpyninja.lms.dto.UserRoleMapSlimDTO;
 import com.numpyninja.lms.entity.Role;
 import com.numpyninja.lms.entity.User;
 import com.numpyninja.lms.entity.UserRoleMap;
@@ -46,6 +47,7 @@ public class UserServices {
 		return userRepository.findAll();
 	}
 	
+	/*
 	public UserDto getAllUsersById(String Id) throws ResourceNotFoundException {
 		Optional<User> userById = userRepository.findById(Id);
 		if(userById.isEmpty()) {
@@ -55,12 +57,32 @@ public class UserServices {
 			UserDto userDto = userMapper.userDto(userById.get());
 			return userDto;
 		}	
+	}*/
+	
+	
+	public List<UserRoleMap> getUserInfoById(String Id) throws ResourceNotFoundException {
+		Optional<User> userById = userRepository.findById(Id);
+		if(userById.isEmpty()) {
+			throw new ResourceNotFoundException("User Id " + Id +" not found");
+		}
+		else {
+			List<UserRoleMap> userroleMap = userRoleMapRepository.findUserRoleMapsByUserUserId(Id);
+			//System.out.println("userroleMap  " + userroleMap);
+			return userroleMap;
+		}	
 	}
 	
 	public List<User> getAllUsersByRole(String roleName) {
 		return userRoleMapRepository.findUserRoleMapsByRoleRoleName(roleName).stream()
 				.map(userRoleMap -> userRoleMap.getUser()).collect(Collectors.toList());
 	}
+	
+	//Displays Users Info with their user status, role, batch and program info
+	public List<UserRoleMap> getAllUsersWithRoles() {
+	 //List<UserRoleMap> list = userRoleMapRepository.findAll();
+		return userRoleMapRepository.findAll();
+	}
+
 	
 	public List<UserRoleMap> getUsersForProgram(Long programId) {
 		List<UserRoleMap> list = userRoleMapRepository.findUserRoleMapsByBatchesProgramProgramId(programId);
@@ -174,51 +196,12 @@ public class UserServices {
 						newUserRoleMapList.get(i).setCreationTime(new Timestamp(utilDate.getTime()));
 						newUserRoleMapList.get(i).setLastModTime(new Timestamp(utilDate.getTime()));
 						UserRoleMap createdUserRole = userRoleMapRepository.save(newUserRoleMapList.get(i));
-						
-						
-						/*switch(roleName) {
-							case "Admin": 
-								roleId="R01";
-								break;
-							case "Staff": 
-								roleId="R02";
-								break;
-							case "User": 
-								roleId="R03";
-								break;
-						}
-						userRole.setRoleId(roleId);
-						userRole.setRoleName(roleName);*/
-						
-						//System.out.println(newUserRoleDto.getUserRoleMaps().get(i).getUserRoleStatus());
-						//batch name/id
+
 					}
 				}
 				else {
 					throw new InvalidDataException("User Data not valid - Missing Role information");
 				}
-				
-				
-				//newUserRoleMapList  = userMapper.userRoleMapList(newUserRoleDto.getUserRoleMaps());
-				//System.out.println("get USer role maps from  newUserRoleDto" + newUserRoleDto.getUserRoleMaps().toString());
-				
-				//System.out.println("USer role maps " + newUserRoleMapList);
-				//System.out.println("newUserRoleMapList size " + newUserRoleMapList.size());
-				
-				
-				/*for(int i = 0; i<newUserRoleMapList.size();i++) {
-					System.out.println("inside if" + newUserRoleMapList.get(i).getRole());
-					newUserRoleMapList.get(i).setRole(newUserRoleMapList.get(i).getRole());
-					newUserRoleMapList.get(i).setUser(newUser);		
-					newUserRoleMapList.get(i).setCreationTime(new Timestamp(utilDate.getTime()));
-					newUserRoleMapList.get(i).setLastModTime(new Timestamp(utilDate.getTime()));
-					UserRoleMap createdUserRole = userRoleMapRepository.save(newUserRoleMapList.get(i));
-					
-				}	*/
-				
-				
-				//newUserRoleMap.setCreationTime(new Timestamp(utilDate.getTime()));
-				//newUserRoleMap.setLastModTime(new Timestamp(utilDate.getTime()));
 	
 			}
 			else {
@@ -248,7 +231,7 @@ public class UserServices {
 				if(userById.isEmpty()) {
 					throw new ResourceNotFoundException("UserID: " + userId+ " Not Found");
 				}
-
+				
 				else {
 					if (!isTimeZoneValid(updateuserDto.getUserTimeZone())) {
 						throw new InvalidDataException("Failed to update user, as 'TimeZone' is invalid !! "); 
@@ -267,6 +250,55 @@ public class UserServices {
 				UserDto updatedUserDto = userMapper.userDto(updatedUser);
 				return updatedUserDto;
 			}
+		}
+		
+
+		public String updateUserRoleStatus(UserRoleMapSlimDTO updateUserRoleStatus, String userId) throws InvalidDataException {
+			
+			if(userId == null) {
+				throw new InvalidDataException("UserId cannot be blank/null");
+			}
+		
+			else {
+				Optional<User> userById = userRepository.findById(userId);
+				
+				if(userById.isEmpty()) {
+					throw new ResourceNotFoundException("UserID: " + userId+ " Not Found");
+				}
+				else {
+				
+					List<UserRoleMap> existingUserRoles = userRoleMapRepository.findUserRoleMapsByUserUserId(userId);
+					
+					String roleIdToUpdate = updateUserRoleStatus.getRoleId();
+				
+					String roleStatusToUpdate = updateUserRoleStatus.getUserRoleStatus();
+					List<String> roleIdList;
+					boolean roleFound = false;
+					for (int roleCount = 0; roleCount<existingUserRoles.size();roleCount++) {
+
+						String existingRoleId = existingUserRoles.get(roleCount).getRole().getRoleId();
+					
+						if(roleIdToUpdate.equals(existingRoleId)){
+							roleFound= true;
+							
+							//if role id exists - update role status	
+							Long userRoleId = existingUserRoles.get(roleCount).getUserRoleId();
+								
+							//using Update custom query					
+							userRoleMapRepository.updateUserRole(userRoleId,roleStatusToUpdate);
+							break;
+						}
+			
+					}
+			
+					if(!roleFound) {
+						throw new ResourceNotFoundException("RoleID: " +roleIdToUpdate + " not found for the " + "UserID: " + userId);	
+					}
+				}
+				
+				return userId;
+			}
+	
 		}
 
 		/**Service method for Delete User**/
@@ -339,7 +371,8 @@ public class UserServices {
 								//System.out.println("roleId " + roleId);
 								Role roleUser = roleRepository.getById(roleId);
 								
-								//roleStatus = updateUserRoleDto.getUserRoleMaps().get(i).getUserRoleStatus();
+								//uncommented the below line
+								roleStatus = updateUserRoleDto.getUserRoleMaps().get(i).getUserRoleStatus();
 								System.out.println("roleStatus " + roleStatus);
 								//userId =  createdUser.getUserId();
 								//System.out.println("userId " + userId);
@@ -372,26 +405,7 @@ public class UserServices {
 				UserDto updatedUserDto = userMapper.userDto(updatedUser);
 				return updatedUserDto;
 			}
-			//return null;
-		}
-		
-		/**Service method for Update User Status
-		 * @throws InvalidDataException **/
-		public UserDto updateUserStatus(UserRoleMap updateUserRoleStatus, String userId) throws InvalidDataException {
-		//	user Id, role Id, role status  - User_role_id(auto generated)
-			UserRoleMap tobeUpdatedUser  = null;
-			
-			if (userId == null) {
-				throw new InvalidDataException("UserId cannot be Blank/Null");
-			}
-			else {
-				tobeUpdatedUser.setUserRoleStatus(updateUserRoleStatus.getUserRoleStatus());
-				tobeUpdatedUser.setUserRoleId(updateUserRoleStatus.getUserRoleId());
-				//tobeUpdatedUser.setUser(userId)	;
-				//should we send the entire user ?? 
-				}
-			//userRoleMapRepository.save();
-			return null;
+
 		}
 		
 		/** Check for already existing phone number**/
