@@ -3,7 +3,7 @@ java:
   version: 11
   
 server:
-  #port: 1234
+  port: 8080
   servlet:
     context-path: /lms
 spring:
