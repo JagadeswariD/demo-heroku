@@ -1,5 +1,5 @@
 server:
-    port: 20928
+    #port: 20928
   servlet:
     context-path: /lms
 spring:
